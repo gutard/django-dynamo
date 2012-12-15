@@ -66,7 +66,8 @@ def create_virtualenv():
 def install_requirements():
     "Install the requirements into the virtualenv"
     sys.stdout.write("Installation of requirements into Virtualenv starts.\n")
-    subprocess.call(["pip", "install", "-E", VIRTUAL_ENV_DIR, "--requirement",REQUIREMENTS_FILE])
+    pip_exe=os.path.join(VIRTUAL_ENV_DIR,'bin','pip')
+    subprocess.call([pip_exe, "install", "--requirement",REQUIREMENTS_FILE])
     sys.stdout.write("Requirements are now installed/updated.\n")
 
 
