@@ -17,8 +17,8 @@ class MetaFieldInlineAdmin(admin.StackedInline):
                       ('order','required','default','choices'),)
             }),
         ('Advanced Options',{
-            'fields': (('verbose_name','description'),
-                       ('unique','unique_together','help')),
+            'fields': (('verbose_name',),
+                       ('unique','unique_together','help_text')),
             'classes': ('collapse',)
             })
         )

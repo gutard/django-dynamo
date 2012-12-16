@@ -137,16 +137,15 @@ FIELD_TYPE_CHOICES = STANDARD_FIELD_TYPE_CHOICES +RELATION_FIELD_TYPE_CHOICES
 
        
 class MetaField(models.Model):
-    name = models.CharField(verbose_name=_('Field Name'),max_length=50)
+    name = models.SlugField(verbose_name=_('Field Name'), max_length=50)
     verbose_name = models.CharField(verbose_name=_('Verbose Name'),max_length=50,null=True,blank=True)
     meta_model = models.ForeignKey(MetaModel,verbose_name=_('Parent Model'), related_name='fields')    
     type = models.CharField(verbose_name=_('Field Type'),max_length=255,choices=FIELD_TYPE_CHOICES)
     related_model = models.CharField(verbose_name=_('Related Model'),max_length=50,null=True,blank=True) #models.ForeignKey('contenttypes.ContentType',null=True,blank=True)    
-    description = models.CharField(verbose_name=_('Field Description'),max_length=255)
     order = models.IntegerField(verbose_name=_('Field Position'))
     unique_together=models.BooleanField(verbose_name=_('Unique Together'))
     unique=models.BooleanField(verbose_name=_('Unique'))    
-    help=models.CharField(verbose_name=_('Help Text'),max_length=150)
+    help_text = models.CharField(verbose_name=_('Help Text'), max_length=150, blank=True, null=True)
     choices = models.CharField(verbose_name=_('Choices'),max_length=200, blank=True,null=True)
     default  = models.CharField(verbose_name=_('Default Value'), max_length=50, blank=True)
     required = models.BooleanField(verbose_name=_('Required'), default=False)
@@ -190,8 +189,8 @@ class MetaField(models.Model):
             kwargs['verbose_name']=self.verbose_name
 
         # Helptext
-        if self.help:
-            kwargs['help_text']=self.help
+        if self.help_text:
+            kwargs['help_text']=self.help_text
 
         # Required ==> Blank, Null
         if self.required:
@@ -217,7 +216,7 @@ class MetaField(models.Model):
         return filter(str.isalnum,self.name.replace('-','_').replace(' ','_').encode('ascii', 'ignore'))
     @property
     def hash_list(self):
-        return [self.name,self.verbose_name,self.type, self.related_model, self.order, self.unique, self.help, self.choices, self.default, self.required]
+        return [self.name,self.verbose_name,self.type, self.related_model, self.order, self.unique, self.help_text, self.choices, self.default, self.required]
 
     @property
     def field_name(self):
