@@ -153,7 +153,7 @@ class MetaField(models.Model):
     @property
     def django_choices(self):
         if self.choices:
-            if self.type in INTEGER_FIELD_TYPES:
+            if self.type in DYNAMO_INTEGER_FIELD_TYPES:
                 return tuple([(i,_(choice)) for i, choice in enumerate(self.choices.split(','))])
             else:
                 return tuple([(choice,_(choice)) for choice in self.choices.split(',')])
