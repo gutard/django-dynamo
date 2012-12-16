@@ -29,8 +29,8 @@ handlers.when_classes_prepared('dynamo.MetaModel','dynamo.MetaField', build_exis
     
   
 class MetaModel(models.Model):
-    name = models.CharField(verbose_name=_('Model Name'),max_length=50)
-    description = models.CharField(verbose_name=_('Model Description'),max_length=255,blank=True)
+    name = models.SlugField(verbose_name=_('Name'), max_length=50, unique=True)
+    verbose_name = models.CharField(verbose_name=_('Verbose name'), max_length=255, blank=True)
     app = models.CharField(verbose_name=_('Application'), max_length=50,blank=True,
                                    choices=tuple([(app.__name__.split('.')[-2],_(app.__name__.split('.')[-2])) for app in app_cache.get_apps()]))
     admin = models.BooleanField(verbose_name=_('Admin'), default=True)
@@ -56,7 +56,7 @@ class MetaModel(models.Model):
             return None
 
         _app_label = getattr(self,'app',None).lower() or DYNAMO_DEFAULT_APP.lower()
-        _model_name=self.model_name.lower()
+        _model_name = self.name.encode('ascii')
         
         try:
             # try to get the model from the model cache
@@ -82,7 +82,7 @@ class MetaModel(models.Model):
         
         class Meta:
             app_label = _app_label
-            verbose_name = self.name
+            verbose_name = self.verbose_name
             unique_together=self.unique_together
         attrs=self.django_fields
         attrs.update({
@@ -100,21 +100,6 @@ class MetaModel(models.Model):
         Returns the unique fields
         '''
         return [field.field_name for field in self.fields.filter(unique_together=True)]
-
-    @property
-    def slug(self):
-        '''
-        A slug field generated out of the name field
-        '''
-        return filter(str.isalnum,self.name.replace('-','_').replace(' ','_').encode('ascii', 'ignore'))
-    @property
-    def model_name(self):
-        '''
-        The name that should be used to create the model. If a different logic should be
-        applied, this method needs to be overridden
-        '''
-        return '%s_%s' %(self.id,self.slug)
-
 
     @property
     def django_fields(self):

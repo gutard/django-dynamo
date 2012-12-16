@@ -33,14 +33,14 @@ class MetaModelAdmin(admin.ModelAdmin):
     model=MetaModel
     form=MetaModelForm
     inlines= [MetaFieldInlineAdmin]
-    list_display =('name','description')
-    list_display_links =('name','description')
-    list_display_editable =('name','description')
+    list_display =('name','verbose_name')
+    list_display_links =('name','verbose_name')
+    list_display_editable =('name','verbose_name')
     ordering=('name',)
     
     fieldsets = (
         (None, {
-            'fields': (('name', 'description'),)
+            'fields': (('name', 'verbose_name'),)
             }),
         ('Advanced options', {
             'classes': ('collapse',),
